@@ -1,21 +1,35 @@
----
 - name: Configure VPS
   hosts: webserver
   become: true
 
   tasks:
-    - name: Update packages
+    - name: Create user accounts
+      user:
+        name: maps
+        password: Amon5us@23
+        state: present
+
+    - name: Check available updates
+      command: apt list --upgradable
+      register: available_updates
+      changed_when: false
+
+    - name: Display available updates
+      debug:
+        var: available_updates.stdout_lines
+
+    - name: Install updates
       apt:
+        upgrade: safe
         update_cache: yes
-        upgrade: yes
 
     - name: Install Nginx
       apt:
         name: nginx
         state: present
 
-    # Add more tasks as per your requirements
-
-  roles:
-    - common
-    - webserver
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted

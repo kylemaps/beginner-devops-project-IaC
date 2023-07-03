@@ -1,0 +1,4 @@
+provider.tfvars
+id_rsa
+ssh
+.ssh
